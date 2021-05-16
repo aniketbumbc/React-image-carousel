@@ -22,7 +22,6 @@ img {
 .prevIcon,
 .nextIcon {
   align-self: center;
-  color: gray;
   cursor: grab;
 }
 .disabled {
