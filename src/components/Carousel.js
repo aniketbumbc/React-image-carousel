@@ -3,39 +3,56 @@ import '../styles/Carousel.css';
 import imagesData from '../imagesData';
 
 const Carousel = () => {
-  let finalImagesData = [...imagesData];
-  //current = array Index
-  const [current, setCurrent] = useState(0);
-  //filterData 4 array
+  // let filterdImagesData = [...imagesData];
+  const [currentEleIndex, setcurrentEleIndex] = useState(0);
   const [image, setImage] = useState([]);
   useEffect(() => {
-    for (let i = 0; i < finalImagesData.length; i++) {
-      finalImagesData[i].images = chooseRandomImage(imagesData[i].images, 4);
+    for (let i = 0; i < [...imagesData].length; i++) {
+      [...imagesData][i].images = getRandomImage(imagesData[i].images, 4);
     }
-    setImage(finalImagesData);
+    setImage([...imagesData]);
+    // eslint-disable-next-line
   }, []);
-  const imagesLength = imagesData.length;
+
+  /**
+   * Method sets next current element state
+   */
+
   const nextSlide = () => {
-    if (current === 3) return;
-    setCurrent(current === imagesLength - 1 ? 0 : current + 1);
-  };
-  const prevSlide = () => {
-    if (current === 0) return;
-    setCurrent(current === 0 ? imagesLength - 1 : current - 1);
+    if (currentEleIndex === 3) return;
+    setcurrentEleIndex(
+      currentEleIndex === imagesData.length - 1 ? 0 : currentEleIndex + 1
+    );
   };
 
-  const chooseRandomImage = (array, number) => {
-    if (array.length <= 0) return [];
-    const res = [];
+  /**
+   * Method sets previous current element state
+   */
+
+  const prevSlide = () => {
+    if (currentEleIndex === 0) return;
+    setcurrentEleIndex(
+      currentEleIndex === 0 ? imagesData.length - 1 : currentEleIndex - 1
+    );
+  };
+
+  /* 
+    Method return 4 random images from imageData.
+  */
+
+  const getRandomImage = (images, number) => {
+    if (images.length <= 0) return [];
+    const randomImages = [];
     for (let i = 0; i < number; i++) {
-      const randomNumber = Math.floor(Math.random() * array.length);
-      if (i === array.length) {
+      const randomNumber = Math.floor(Math.random() * images.length);
+      if (i === images.length) {
         break;
       }
-      res.push(array[randomNumber]);
+      randomImages.push(images[randomNumber]);
     }
-    return res;
+    return randomImages;
   };
+
   if (image.length <= 0) {
     return <h4> Data Not Found</h4>;
   }
@@ -45,19 +62,19 @@ const Carousel = () => {
       <div className='boxModel'>
         <i
           className={
-            current === 0
+            currentEleIndex === 0
               ? 'fas fa-arrow-left fa-2x prevIcon  disabled'
-              : 'fas fa-arrow-left fa-2x prevIcon'
+              : 'fas fa-arrow-left fa-2x  prevIcon'
           }
           onClick={prevSlide}
         ></i>
-        {image.map((slide, index) => {
+        {image.map((block, index) => {
           return (
-            <div className='row1' key={index}>
-              {index === current && <h4>{slide.title}</h4>}
+            <div className='row' key={index}>
+              {index === currentEleIndex && <h4>{block.title}</h4>}
 
-              {index === current &&
-                slide.images.map((imgUrl, index) => (
+              {index === currentEleIndex &&
+                block.images.map((imgUrl, index) => (
                   <div className='column' key={index + 'clmn'}>
                     <img src={imgUrl} alt='Snow' />
                   </div>
@@ -67,7 +84,7 @@ const Carousel = () => {
         })}
         <i
           className={
-            current === image.length - 1
+            currentEleIndex === image.length - 1
               ? 'fas fa-arrow-right fa-2x nextIcon disabled'
               : 'fas fa-arrow-right fa-2x nextIcon'
           }
